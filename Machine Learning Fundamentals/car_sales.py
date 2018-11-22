@@ -41,5 +41,4 @@ change_type = ["normalized-losses",
 "peak-rpm",
 "price"]
 cars[change_type] = cars[change_type].apply(pd.to_numeric, errors='coerce')
-cars = cars.dropna(subset="price")
-
+cars = cars.dropna(subset=["price"])
