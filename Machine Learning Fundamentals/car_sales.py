@@ -34,11 +34,25 @@ cols = ["symboling",
 "price"]
 cars.columns = cols
 cars.replace("?", np.nan, inplace=True)
-change_type = ["normalized-losses",
+
+numeric_cols = ["normalized-losses",
+"wheel-base",
+"length",
+"width",
+"height",
+"curb-weight",
 "bore",
 "stroke",
+"compression-ratio",
 "horsepower",
 "peak-rpm",
+"city-mpg",
+"highway-mpg",
 "price"]
-cars[change_type] = cars[change_type].apply(pd.to_numeric, errors='coerce')
-cars = cars.dropna(subset=["price"])
+
+cars = cars[numeric_cols].apply(pd.to_numeric, errors='coerce')
+numeric_cars = cars[numeric_cols]
+numeric_cars = cars.dropna(subset=["price"])
+numeric_cars = numeric_cars.fillna(numeric_cars.mean())
+
+norm_cars = (numeric_cars-numeric_cars.min())/(numeric_cars.max()-numeric_cars.min())
