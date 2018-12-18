@@ -1,11 +1,17 @@
+# Below is my own non-binary decision tree implementation. Non-binary was chosen to better suit predictions made on
+# categorical data. I believe other solutions such as an adapted one-for-all binary split may function similarly.
+
+# While I recognise a solution utilising hash tables will have lower runtimes in situations when a feature
+# contains many unique values, this was simply a self-imposed challenge in OOP and class-based recursive solutions.
+
 import numpy as np
 import pandas as pd
 
 
 def entropy(column):
     elements, counts = np.unique(column, return_counts=True)
-    # if statement in comprehension stops nan result since 0*log2(x) is undefined, returns 0. in this case,
-    # 1*log2(1) + 0*log2(0) = 0. zero entropy result, zero uncertainty is consistent with theory
+    # "if" statement in list comprehension stops nan result. Since 0*log2(x) is undefined, we return 0. In this case,
+    # 1*log2(1) + 0*log2(0) = 0. Zero entropy result == zero uncertainty, consistent with theory
     entropy = np.sum(
         [-(counts[i] / np.sum(counts)) * np.log2(counts[i] / np.sum(counts)) if counts[i] > 0 else 0 for i in
          range(len(counts))])
@@ -32,10 +38,6 @@ def find_best(data, target_name, features):
     return best_col
 
 
-def predict():
-    return
-
-
 class Tree():
     def __init__(self, children: object = None, label: object = None, value: object = None) -> object:
         self.children = children if children is not None else []
@@ -50,7 +52,29 @@ class DecisionTree():
         pass
 
     def fit(self, data, target, features):
-        def run_id3(data, target, features, tree):
+        '''
+        :param data:
+        :param target:
+        :param features:
+        :return:
+
+        The fit method is called on the DecisionTree.tree attribute. This field will ALWAYS be reset to an empty
+        tree when fit is called to avoid issues when calling fit twice with different data.
+        '''
+        def run_id3(data: object, target: object, features: object, tree: object) -> object:
+            '''
+            (DataFrame, String, List, Tree) -> DataFrame[target].dtypes
+            :param data:
+            :param target:
+            :param features:
+            :return:
+
+            The run_id3 function recursively splits on the best feature, saving that feature as the node label and
+            creating child nodes with their values as the feature's unique values. The child node is passed as the
+            "tree" parameter, and the filtered DataFrame as the data parameter. Once the repeatedly split DataFrame
+            contains only one unique value, the node label is set to the Target name, and only one child is created
+            with the predicted value.
+            '''
             unique_targets = pd.unique(data[target])
             if len(unique_targets) == 1:
                 tree.label = target
@@ -68,7 +92,23 @@ class DecisionTree():
         run_id3(data, target, features, self.tree)
 
     def predict(self, row):
+        """
+        :param row:
+        :return:
+
+        As with the fit method, the predict method is called on the DecisionTree.tree attribute after the fit method
+        has populated the DecisionTree.
+        """
         def get_prediction(tree: object, row: object) -> object:
+            """
+            :param tree:
+            :param row:
+            :return:
+
+             The predict function recursively steps down the decision tree, checking each child's value attribute for
+            that which matches the data. Once a node is found with only one child (indicating no further splits), the
+            child's value (prediction) is returned.
+            """
             column = tree.label
             if len(tree.children) == 1:
                 return tree.children[0].value
@@ -109,3 +149,4 @@ def testing_pred():
 
 if __name__ == "__main__":
     print("Prediction for 'Play' on testing data: {}".format(testing_pred()))
+
