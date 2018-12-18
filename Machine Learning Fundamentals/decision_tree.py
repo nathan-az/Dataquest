@@ -61,6 +61,7 @@ class DecisionTree():
         The fit method is called on the DecisionTree.tree attribute. This field will ALWAYS be reset to an empty
         tree when fit is called to avoid issues when calling fit twice with different data.
         '''
+
         def run_id3(data: object, target: object, features: object, tree: object) -> object:
             '''
             (DataFrame, String, List, Tree) -> DataFrame[target].dtypes
@@ -99,6 +100,7 @@ class DecisionTree():
         As with the fit method, the predict method is called on the DecisionTree.tree attribute after the fit method
         has populated the DecisionTree.
         """
+
         def get_prediction(tree: object, row: object) -> object:
             """
             :param tree:
@@ -149,4 +151,3 @@ def testing_pred():
 
 if __name__ == "__main__":
     print("Prediction for 'Play' on testing data: {}".format(testing_pred()))
-
